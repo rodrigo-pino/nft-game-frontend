@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 
@@ -7,6 +7,33 @@ const TWITTER_HANDLE = '_buildspace';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
+  const [currentAccount, setCurrentAccount] = useState(null)
+  
+  const checkIfWalletIsConnected = () => {
+    try {
+      const {ethereum} = window;
+      if (!ethereum) {
+        console.log("MetaMask not detected! Get MetaMask");
+        return;
+      }
+      console.log("Wallet Connected:", ethereum);
+      const accounts = await ethereum.request({method: 'eth_accounts'});
+        if (accounts.length != 0) {
+          const account = accounts[0];
+          console.log('Found an authorized account:', account);
+          setCurrentAccount(account)
+        } else {
+          console.log('No authorized account found');
+        }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+    
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, []);
+   
   return (
     <div className="App">
       <div className="container">
